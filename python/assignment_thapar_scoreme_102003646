@@ -1,0 +1,35 @@
+from collections import deque
+
+def topological_sort(graph):
+    n = len(graph)
+    in_degree = [0] * n
+    for u in range(n):
+        for v, w in graph[u]:
+            in_degree[v] += 1
+    
+    queue = deque([u for u in range(n) if in_degree[u] == 0])
+    topo_order = []
+    
+    while queue:
+        u = queue.popleft()
+        topo_order.append(u)
+        for v, w in graph[u]:
+            in_degree[v] -= 1
+            if in_degree[v] == 0:
+                queue.append(v)
+    
+    return topo_order
+
+def longest_path(graph):
+    n = len(graph)
+    topo_order = topological_sort(graph)
+    dist = [-float('inf')] * n
+    
+    for u in topo_order:
+        if dist[u] == -float('inf'):
+            dist[u] = 0
+        for v, w in graph[u]:
+            if dist[u] + w > dist[v]:
+                dist[v] = dist[u] + w
+    
+    return max(dist)
